@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>February Task Scheduler</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-calendar-alt"></i> February Task Scheduler</h1>
+      <p class="subtitle">Track your daily coding practice and learning progress</p>
+      
+      <div class="stats-container">
+        <div class="stat-box">
+          <h3><span id="completed-tasks">0</span>/<span id="total-tasks">0</span></h3>
+          <p>Tasks Completed</p>
+        </div>
+        <div class="stat-box">
+          <h3><span id="current-streak">0</span> days</h3>
+          <p>Current Streak</p>
+        </div>
+        <div class="stat-box">
+          <h3><span id="completion-rate">0</span>%</h3>
+          <p>Completion Rate</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="date-filter">
+        <button id="prev-month" class="month-btn"><i class="fas fa-chevron-left"></i> Jan</button>
+        <h2>February 2025</h2>
+        <button id="next-month" class="month-btn">Mar <i class="fas fa-chevron-right"></i></button>
+      </div>
+      
+      <div class="view-controls">
+        <button id="toggle-view" class="view-btn"><i class="fas fa-table"></i> Switch to Card View</button>
+        <button id="reset-all" class="reset-btn"><i class="fas fa-redo"></i> Reset Progress</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Table View (Default) -->
+      <div class="table-view active" id="table-view">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="date-col">Date</th>
+                <th class="platform-col">
+                  <i class="fab fa-java"></i> LeetCode
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="platform-col">
+                  <i class="fas fa-code"></i> GFG
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="platform-col">
+                  <i class="fas fa-laptop-code"></i> Coding Ninja
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="platform-col">
+                  <i class="fas fa-chart-line"></i> CodeChef
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="platform-col">
+                  <i class="fas fa-language"></i> Duolingo
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="platform-col">
+                  <i class="fas fa-mobile-alt"></i> Mimo
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="platform-col">
+                  <i class="fas fa-graduation-cap"></i> Additional Course
+                  <span class="hint">Click to mark complete</span>
+                </th>
+                <th class="day-score">Day Score</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Filled by script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Card View -->
+      <div class="card-view" id="card-view">
+        <div class="cards-container" id="cards-container">
+          <!-- Filled by script.js -->
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <span class="legend-box not-due"></span> Not Due Yet
+      </div>
+      <div class="legend-item">
+        <span class="legend-box pending"></span> Pending
+      </div>
+      <div class="legend-item">
+        <span class="legend-box completed"></span> Completed
+      </div>
+      <div class="legend-item">
+        <span class="legend-box overdue"></span> Overdue
+      </div>
+      <div class="legend-item">
+        <span class="legend-box weekend"></span> Weekend
+      </div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="tips-btn" onclick="showPopup()">
+        <i class="fas fa-lightbulb"></i> Tips for Scheduling
+      </button>
+      <button class="export-btn" id="export-btn">
+        <i class="fas fa-download"></i> Export Progress
+      </button>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popup-overlay">
+      <div class="popup" id="popup">
+        <div class="popup-header">
+          <h2><i class="fas fa-lightbulb"></i> Scheduling Tips</h2>
+          <button class="close-popup" onclick="closePopup()">&times;</button>
+        </div>
+        <div class="popup-content">
+          <div class="tip">
+            <i class="fas fa-flag"></i>
+            <h3>Prioritize Your Tasks</h3>
+            <p>Focus on high-value activities first. For coding practice, start with the platform that aligns with your current goals.</p>
+          </div>
+          <div class="tip">
+            <i class="fas fa-tasks"></i>
+            <h3>Break Tasks into Smaller Steps</h3>
+            <p>Instead of "solve 5 problems," try "solve 2 array problems, 2 string problems, and 1 DP problem."</p>
+          </div>
+          <div class="tip">
+            <i class="fas fa-clock"></i>
+            <h3>Time Blocking</h3>
+            <p>Schedule specific time slots for each platform. Example: 9-10 AM for LeetCode, 4-5 PM for CodeChef.</p>
+          </div>
+          <div class="tip">
+            <i class="fas fa-brain"></i>
+            <h3>Active Recall & Spaced Repetition</h3>
+            <p>Review previously solved problems regularly. Revisit difficult problems after 1 day, 3 days, and 1 week.</p>
+          </div>
+          <div class="tip">
+            <i class="fas fa-calendar-check"></i>
+            <h3>Track Progress Daily</h3>
+            <p>Use this scheduler to mark completed tasks. Visual progress tracking boosts motivation and consistency.</p>
+          </div>
+          <div class="tip">
+            <i class="fas fa-balance-scale"></i>
+            <h3>Balance Learning Platforms</h3>
+            <p>Don't focus on just one platform. Mix LeetCode (interview prep) with CodeChef (competitions) and Mimo (concepts).</p>
+          </div>
+        </div>
+        <div class="popup-footer">
+          <button class="popup-close-btn" onclick="closePopup()">Got it!</button>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>February 2025 Task Scheduler | Designed for consistent learning</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
