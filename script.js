@@ -1,4 +1,4 @@
-// February Task Scheduler - Main Script
+// February Task Scheduler - Main Script (Updated for 2026)
 
 // Configuration
 const PLATFORMS = [
@@ -12,7 +12,8 @@ const PLATFORMS = [
 ];
 
 const DAYS_IN_FEBRUARY = 28;
-const CURRENT_YEAR = 2025;
+const CURRENT_YEAR = 2026;
+const CURRENT_MONTH = 1; // February (0-based: 0=Jan, 1=Feb, etc.)
 
 // State management
 let tasksState = {};
@@ -31,24 +32,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize tasks state from localStorage or create fresh
 function initializeState() {
-  const savedState = localStorage.getItem('februaryTasks');
+  const savedState = localStorage.getItem('februaryTasks2026');
   
   if (savedState) {
     tasksState = JSON.parse(savedState);
     // Calculate current streak
     streak = calculateStreak();
   } else {
-    // Create fresh state for February
+    // Create fresh state for February 2026
     const today = new Date();
     const currentDay = today.getDate();
-    const currentMonth = today.getMonth() + 1; // January is 0
+    const currentMonth = today.getMonth(); // 0-based
+    const currentYear = today.getFullYear();
     
     for (let day = 1; day <= DAYS_IN_FEBRUARY; day++) {
-      const dateKey = `2025-02-${day.toString().padStart(2, '0')}`;
-      const dateObj = new Date(CURRENT_YEAR, 1, day);
+      const dateKey = `2026-02-${day.toString().padStart(2, '0')}`;
+      const dateObj = new Date(CURRENT_YEAR, CURRENT_MONTH, day);
       const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
-      const isFuture = (currentMonth < 2) || (currentMonth === 2 && day > currentDay);
-      const isPast = (currentMonth > 2) || (currentMonth === 2 && day < currentDay);
+      const isFuture = currentYear < 2026 || 
+                      (currentYear === 2026 && currentMonth < 1) || 
+                      (currentYear === 2026 && currentMonth === 1 && day > currentDay);
+      const isPast = currentYear > 2026 || 
+                    (currentYear === 2026 && currentMonth > 1) || 
+                    (currentYear === 2026 && currentMonth === 1 && day < currentDay);
       
       tasksState[dateKey] = {
         date: dateObj,
@@ -64,7 +70,10 @@ function initializeState() {
           tasksState[dateKey].platforms[platform.id] = 'not-due';
         } 
         // If date is today or in the past, mark as "pending"
-        else if (isPast || day === currentDay) {
+        else if (isPast || (currentYear === 2026 && currentMonth === 1 && day === currentDay)) {
+          tasksState[dateKey].platforms[platform.id] = 'pending';
+        } else {
+          // For dates before 2026 or if current year is not 2026
           tasksState[dateKey].platforms[platform.id] = 'pending';
         }
       });
@@ -79,14 +88,15 @@ function calculateStreak() {
   let currentStreak = 0;
   const today = new Date();
   const todayDay = today.getDate();
-  const todayMonth = today.getMonth() + 1;
+  const todayMonth = today.getMonth(); // 0-based
+  const todayYear = today.getFullYear();
   
-  // Only calculate streak if we're in February
-  if (todayMonth !== 2) return 0;
+  // Only calculate streak if we're in February 2026
+  if (todayYear !== 2026 || todayMonth !== 1) return 0;
   
   // Check days backwards from today
   for (let day = todayDay; day >= 1; day--) {
-    const dateKey = `2025-02-${day.toString().padStart(2, '0')}`;
+    const dateKey = `2026-02-${day.toString().padStart(2, '0')}`;
     const dayData = tasksState[dateKey];
     
     if (!dayData) break;
@@ -112,7 +122,7 @@ function renderTable() {
   tableBody.innerHTML = '';
   
   for (let day = 1; day <= DAYS_IN_FEBRUARY; day++) {
-    const dateKey = `2025-02-${day.toString().padStart(2, '0')}`;
+    const dateKey = `2026-02-${day.toString().padStart(2, '0')}`;
     const dayData = tasksState[dateKey];
     
     const row = document.createElement('tr');
@@ -155,7 +165,7 @@ function renderCards() {
   cardsContainer.innerHTML = '';
   
   for (let day = 1; day <= DAYS_IN_FEBRUARY; day++) {
-    const dateKey = `2025-02-${day.toString().padStart(2, '0')}`;
+    const dateKey = `2026-02-${day.toString().padStart(2, '0')}`;
     const dayData = tasksState[dateKey];
     const dayScore = calculateDayScore(dateKey);
     
@@ -322,7 +332,7 @@ function updateStats() {
 
 // Save state to localStorage
 function saveState() {
-  localStorage.setItem('februaryTasks', JSON.stringify(tasksState));
+  localStorage.setItem('februaryTasks2026', JSON.stringify(tasksState));
 }
 
 // Setup event listeners for buttons and controls
@@ -349,7 +359,7 @@ function setupEventListeners() {
   // Reset all progress
   document.getElementById('reset-all').addEventListener('click', function() {
     if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
-      localStorage.removeItem('februaryTasks');
+      localStorage.removeItem('februaryTasks2026');
       location.reload();
     }
   });
@@ -361,23 +371,24 @@ function setupEventListeners() {
   
   // Month navigation buttons (disabled for this demo, but functional)
   document.getElementById('prev-month').addEventListener('click', function() {
-    alert('January data would load here in a full application.');
+    alert('January 2026 data would load here in a full application.');
   });
   
   document.getElementById('next-month').addEventListener('click', function() {
-    alert('March data would load here in a full application.');
+    alert('March 2026 data would load here in a full application.');
   });
 }
 
 // Check current date and highlight today
 function checkCurrentDate() {
   const today = new Date();
-  const todayMonth = today.getMonth() + 1;
+  const todayMonth = today.getMonth(); // 0-based
   const todayDay = today.getDate();
+  const todayYear = today.getFullYear();
   
-  // Only highlight if we're in February
-  if (todayMonth === 2 && todayDay <= DAYS_IN_FEBRUARY) {
-    const dateKey = `2025-02-${todayDay.toString().padStart(2, '0')}`;
+  // Only highlight if we're in February 2026
+  if (todayYear === 2026 && todayMonth === 1 && todayDay <= DAYS_IN_FEBRUARY) {
+    const dateKey = `2026-02-${todayDay.toString().padStart(2, '0')}`;
     
     // Highlight today's row in table
     const rows = document.querySelectorAll('#table-body tr');
@@ -400,7 +411,7 @@ function exportProgress() {
   const dataStr = JSON.stringify(tasksState, null, 2);
   const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
   
-  const exportFileDefaultName = `february-tasks-${new Date().toISOString().split('T')[0]}.json`;
+  const exportFileDefaultName = `february-2026-tasks-${new Date().toISOString().split('T')[0]}.json`;
   
   const linkElement = document.createElement('a');
   linkElement.setAttribute('href', dataUri);
@@ -444,4 +455,4 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closePopup();
   }
-});
+});0
